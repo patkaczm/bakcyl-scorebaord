@@ -1,0 +1,10 @@
+{
+	"folders": [
+		{
+			"path": "/home/patryk/Projects/website"
+		}
+	],
+	"settings": {
+		"python.pythonPath": "website-env/bin/python3.6"
+	}
+}
