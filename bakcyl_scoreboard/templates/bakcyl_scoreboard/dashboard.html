@@ -1,0 +1,12 @@
+{% extends "website/base.html" %}
+
+{% block title%} Dashboard {% endblock %}
+
+{% block content %}
+
+    {% if user.is_authenticated %}
+        Hello, {{user.username}}
+    {% else %}
+        Login <a href="/login">here.</a>
+    {% endif %}
+{% endblock %}
