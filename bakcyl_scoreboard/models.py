@@ -27,7 +27,7 @@ class Solution(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
     code = models.TextField(default='')
     score = models.ForeignKey(Score, on_delete=models.CASCADE, default=Score())
-    isFinal = models.BooleanField(default=False)
+    # isFinal = models.BooleanField(default=False)
 
     def __str__(self):
         return self.task.name + " " + self.user.username
