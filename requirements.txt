@@ -4,7 +4,6 @@ django-crispy-forms==1.8.0
 isort==4.3.21
 lazy-object-proxy==1.4.3
 mccabe==0.6.1
-pkg-resources==0.0.0
 pylint==2.4.4
 pytz==2019.3
 six==1.13.0
