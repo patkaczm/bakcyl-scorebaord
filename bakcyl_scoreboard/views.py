@@ -61,7 +61,8 @@ def task_detail_user(response, task_id):
                                                                     "form":form})
 
 def task_detail(response, task_id):
-    isTutor = PersonalInfo.objects.get(user=response.user).isTutor
+    # isTutor = PersonalInfo.objects.get(user=response.user).isTutor
+    isTutor = False
     if not isTutor:
         return task_detail_user(response, task_id)
     else:
