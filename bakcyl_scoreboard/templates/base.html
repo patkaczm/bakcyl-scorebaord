@@ -34,7 +34,7 @@
                                 <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">Tasks</a>
                                 <div class="dropdown-menu ">
                                     {% for task in tasks %}                                    
-                                    <a href="/task/{{task.id}}" class="dropdown-item list-group-item list-group-item-action"> {{task.name}}</a>
+                                    <a href="/task/{{task.id}}" class="dropdown-item"> {{task.name}}</a>
                                     {% endfor %}
                                 </div>
                             </li>

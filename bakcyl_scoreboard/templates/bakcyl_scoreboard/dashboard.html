@@ -11,13 +11,13 @@
         <div>
             {% if tasks %}
                 <div class="list-group">
-                    {% for task in tasks %}
                     <ul class="list-group">
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <a href="/task/{{task.id}}" class="list-group-item list-group-item-action"> {{task.name}} <span class="badge badge-primary badge-pill">{{task.max_score}}</span></a>        
+                    {% for task in tasks %}
+                        <li class="d-flex justify-content-between align-items-center">
+                            <a href="/task/{{task.id}}" class="list-group-item list-group-item-action"> {{task.name}} <span class="badge badge-primary badge-pill">{{task.max_score}}</span></a>
                         </li>
-                    </ul>
                     {% endfor %}
+                    </ul>
                 </div> 
             {% else %}
                 There is no task yet.
