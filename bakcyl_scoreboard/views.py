@@ -34,9 +34,14 @@ def task_detail(response, task_id):
         form = SolutionForm()
         
     if solution and solution.isFinal:
-        return render(response, "bakcyl_scoreboard/task_detail.html", {"task":task,
-                                                                      "solution":solution})
+        return render(response, "bakcyl_scoreboard/task_detail.html", {
+                                                                      "tasks":Task.objects.all(),
+                                                                      "task":task,
+                                                                      "solution":solution,
+                                                                      })
     else:
-        return render(response, "bakcyl_scoreboard/task_detail.html", {"task":task,
+        return render(response, "bakcyl_scoreboard/task_detail.html", {
+                                                                      "tasks":Task.objects.all(),
+                                                                      "task":task,
                                                                       "solution":solution,
                                                                       "form":form})

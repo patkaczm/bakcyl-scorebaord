@@ -1,4 +1,4 @@
-{% extends "website/base.html" %}
+{% extends "base.html" %}
 
 {% load static %}
 
@@ -10,7 +10,6 @@
         Hello, {{user.username}}
         <div>
             {% if tasks %}
-                Available tasks:
                 <div class="list-group">
                     {% for task in tasks %}
                     <ul class="list-group">

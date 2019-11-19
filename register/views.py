@@ -4,7 +4,8 @@ from bakcyl_scoreboard import urls as bakcyl_urls
 from django.contrib.auth import authenticate, login
 
 def register(response):
-
+    if response.user.is_authenticated:
+        return redirect("dashboard")
     if response.method == "POST":
         form = RegisterForm(response.POST)
         if form.is_valid():

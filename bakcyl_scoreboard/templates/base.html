@@ -9,28 +9,6 @@
     {% block meta %}{% endblock %}
     <title>{% block title %}{% endblock %}</title>
     <style type="text/css">
-        .sidenav {
-            height: 100%;
-            weight: 160px;
-            position: fixed;
-            z-index: 1;
-            top: 0;
-            left: 0;
-            background-color: #111;
-            overflow-x: hidden;
-            padding-top:20px;
-        }
-        .sidenav a {
-            padding: 6px 16px 6px 16px;
-            text-decoration: none;
-            font-size: 25px;
-            color: #818181;
-            display: block;
-        }
-        .sidenav a:hover {
-            color:#f1f1f1;
-        }
-
         .main {
             margin-left: 160px;
             padding: 0px 10px;
@@ -39,19 +17,37 @@
 </head>
 
 <body>
-    <div class="sidenav">
-        <a href="/">Home</a>
-        {% if user.is_authenticated %}
-            <a href="/logout">Logout</a>
-        {% else %}
-            <a href="/login">Login</a>
-        {% endif %}
-    </div>
+    
 
     <div class=main>
         <div class="row justify-content-center">
             <div class="col-8">
                 <h1 class="mt-2">Bakcyl ScoreBoard</h1>
+                <div class="navpane">
+                        <ul class="nav nav-pills">
+                            <li class="nav-item">
+                                <a class="nav-link active" href="/">Home</a>
+                            </li>
+                            {% if user.is_authenticated %}
+                            {% block navtask %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">Tasks</a>
+                                <div class="dropdown-menu ">
+                                    {% for task in tasks %}                                    
+                                    <a href="/task/{{task.id}}" class="dropdown-item list-group-item list-group-item-action"> {{task.name}}</a>
+                                    {% endfor %}
+                                </div>
+                            </li>
+                            {% endblock %}
+                            <li class="nav-item">
+                                    <a class="nav-link" href="/logout">Logout</a>
+                            {% else %}
+                            <li class="nav-item"></li>
+                                    <a class="nav-link" href="/login">Login</a>
+                            {% endif %}
+                            </li>
+                        </ul>     
+                    </div>
                 <hr class="mt-0 mb-4">
                 {% block content %}
                 {% endblock %}
