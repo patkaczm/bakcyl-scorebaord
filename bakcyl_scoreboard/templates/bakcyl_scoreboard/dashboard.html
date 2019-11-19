@@ -1,11 +1,29 @@
 {% extends "website/base.html" %}
 
+{% load static %}
+
 {% block title%} Dashboard {% endblock %}
 
 {% block content %}
 
     {% if user.is_authenticated %}
         Hello, {{user.username}}
+        <div>
+            {% if tasks %}
+                Available tasks:
+                <div class="list-group">
+                    {% for task in tasks %}
+                    <ul class="list-group">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <a href="/task/{{task.id}}" class="list-group-item list-group-item-action"> {{task.name}} <span class="badge badge-primary badge-pill">{{task.max_score}}</span></a>        
+                        </li>
+                    </ul>
+                    {% endfor %}
+                </div> 
+            {% else %}
+                There is no task yet.
+            {% endif %}
+        </div>
     {% else %}
         Login <a href="/login">here.</a>
     {% endif %}
