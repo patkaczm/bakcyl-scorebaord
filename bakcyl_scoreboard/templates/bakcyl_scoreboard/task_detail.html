@@ -10,40 +10,41 @@
 {% block title%} Dashboard {% endblock %}
 
 {% block content %}
-
-    {% if user.is_authenticated %}
-        <h5>Your solution for task: <a href={{task.link}}>{{task.name}}</a></h5>
-        
-        {% if solution and not solution.isFinal %}
-            <pre><code data-language="c">{{solution.code}}</code></pre>
+    <div class="shadow p-3 mb-5 bg-white rounded">
+        {% if user.is_authenticated %}
+            <h5>Your solution for task: <a href={{task.link}}>{{task.name}}</a></h5>
             
-            <form method="POST" class="form-group">
-                    {% csrf_token %}
-                    {{form|crispy}}
-                    <button type="submit" name="submit" class="btn btn-success">Submit</button>
-                    <button type="submit" name="final" class="btn btn-danger">Submit Final</button>
-            </form>
-        
-        {% elif solution %}
-        
-            <pre><code data-language="c">{{solution.code}}</code></pre>
-            {% if solution.score.isScored %}
-                <pre><code data-language="c">{{solution.score.comment}}</code></pre>
-                Score: {{solution.score.mark}}/{{task.max_score}}
-                <br>Tutor: {{solution.score.tutor}}
+            {% if solution and not solution.isFinal %}
+                <pre><code data-language="c">{{solution.code}}</code></pre>
+                
+                <form method="POST" class="form-group">
+                        {% csrf_token %}
+                        {{form|crispy}}
+                        <button type="submit" name="submit" class="btn btn-success">Submit</button>
+                        <button type="submit" name="final" class="btn btn-danger">Submit Final</button>
+                </form>
+            
+            {% elif solution %}
+            
+                <pre><code data-language="c">{{solution.code}}</code></pre>
+                {% if solution.score.isScored %}
+                    <pre><code data-language="c">{{solution.score.comment}}</code></pre>
+                    Score: {{solution.score.mark}}/{{task.max_score}}
+                    <br>Tutor: {{solution.score.tutor}}
+                {% endif %}
+            
+            {% else %}
+                <form method="POST" class="form-group">
+                        {% csrf_token %}
+                        {{form|crispy}}
+                        <button type="submit" name="submit" class="btn btn-success">Submit</button>
+                        <button type="submit" name="final" class="btn btn-danger">Submit Final</button>
+                </form>
             {% endif %}
-        
-        {% else %}
-            <form method="POST" class="form-group">
-                    {% csrf_token %}
-                    {{form|crispy}}
-                    <button type="submit" name="submit" class="btn btn-success">Submit</button>
-                    <button type="submit" name="final" class="btn btn-danger">Submit Final</button>
-            </form>
-        {% endif %}
 
-    {% else %}
-        Login <a href="/login">here.</a>
-    {% endif %}
-    <script src="{% static "js/rainbow-custom.min.js" %}"></script>
+        {% else %}
+            Login <a href="/login">here.</a>
+        {% endif %}
+        <script src="{% static "js/rainbow-custom.min.js" %}"></script>
+    </div>
 {% endblock %}
