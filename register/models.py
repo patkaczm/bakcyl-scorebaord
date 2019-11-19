@@ -7,6 +7,7 @@ class PersonalInfo(models.Model):
     codewars_name = models.CharField(max_length=40, default='')
     first_name = models.CharField(max_length=128, blank=True, null=True)
     last_name = models.CharField(max_length=128, blank=True, null=True)
+    isTutor = models.BooleanField(default=False)
 
     def __str__(self):
         return self.user.username
