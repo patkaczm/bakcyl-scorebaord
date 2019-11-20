@@ -13,7 +13,11 @@
 
     {% if user.is_authenticated %}
         <div class="row justify-content-center">
-            <h3>{{task.name}}</h3>
+            <div class="shadow-sm p-3 mb-5 bg-white rounded col">
+                <div class="row justify-content-center">
+                    <h3><a href={{task.link}}>{{task.name}}</a></h3>(max score: {{task.max_score}})
+                </div>
+            </div>
         </div>
         <div class="row justify-content-center">
             <div class="col-3">
