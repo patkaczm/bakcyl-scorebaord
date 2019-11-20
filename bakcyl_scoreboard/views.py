@@ -10,17 +10,37 @@ def index(request):
     return render(request, "bakcyl_scoreboard/dashboard.html", {"tasks":tasks})
 
 def task_detail_tutor(response, task_id):
+    solutuion = None
+    if response.method == "POST":
+        if "showSolution" in response.POST:
+            solutuion = Solution.objects.get(id=response.POST.get("showSolution"))
+        elif "submit" in response.POST:
+            form = CommentForm(response.POST)
+            if form.is_valid():
+                scored_solution = Solution.objects.get(id=response.POST.get("submit"))
+                score = scored_solution.score
+                score.comment = form.cleaned_data['comment']
+                score.mark = form.cleaned_data['score']
+                score.tutor = response.user
+                score.save()
+                print(scored_solution)
+        else:
+            pass
+            
+
     all_tasks = Task.objects.all()
     task = Task.objects.get(id=task_id)
-    solutuions = Solution.objects.filter(task=task)
+    unscored = Solution.objects.filter(task=task, score__isScored=False)
+    scored = Solution.objects.filter(task=task, score__isScored=True)
+    
     form = CommentForm()
-    if type(solutuions) == Solution:
-        solutuions = [solutuions]
 
     return render(response, "bakcyl_scoreboard/task_detail_tutor.html", {"tasks":all_tasks,
+                                                                         "task":task,
                                                                          "form":form,
-                                                                         "solutions":solutuions})
-    pass
+                                                                         "scored":scored,
+                                                                         "unscored":unscored,
+                                                                         "solution":solutuion})
 
 def task_detail_user(response, task_id):
     task = Task.objects.get(id=task_id)

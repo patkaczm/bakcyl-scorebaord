@@ -12,18 +12,56 @@
 {% block content %}
 
     {% if user.is_authenticated %}
-        
-        {% for solution in solutions %}
-        <div class="shadow-sm p-3 mb-5 bg-white rounded">
-            From: {{solution.user.username}}      
-            <pre><code data-language="c">{{solution.code}}</code></pre>
-            <form method="POST" class="form-group">
-                    {% csrf_token %}
-                    {{form|crispy}}
-                    <button type="submit" name="submit" class="btn btn-success">Submit</button>
-            </form>
+        <div class="row justify-content-center">
+            <h3>{{task.name}}</h3>
         </div>
-        {% endfor %}
+        <div class="row justify-content-center">
+            <div class="col-3">
+                {% if unscored %}
+                    Unscored: <span class="badge badge-pill badge-primary">{{unscored.count}}</span>
+                    {% for solution in unscored %}
+                            <form method="POST" class="form-group ">
+                                {% csrf_token %}
+                                <button type="submit" value="{{solution.id}}" name="showSolution" class="list-group-item list-group-item-action">{{solution.user.username}}</button>
+                            </form>
+                    {% endfor %}
+                {% endif %}
+                {% if scored %}
+                    Scored: <span class="badge badge-pill badge-primary">{{scored.count}}</span>
+                    {% for solution in scored %}
+                            <form method="POST" class="form-group ">
+                                {% csrf_token %}
+                                <button type="submit" value="{{solution.id}}" name="showSolution" class="list-group-item list-group-item-action">{{solution.user.username}}</button>
+                            </form>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="col-9">
+                {% if solution %}
+                    <div class="shadow-sm p-3 mb-5 bg-white rounded">
+                    From: {{solution.user.username}}      
+                    <pre><code data-language="c">{{solution.code}}</code></pre>
+                    {% if solution.score.isScored %}
+                        Comment:
+                        <pre><code data-language="c">{{solution.score.comment}}</code></pre>
+                        Score:
+                        {{solution.score.mark}} / {{task.max_score}}
+                        <br>Tutor:
+                        {{solution.score.tutor.username}}
+                    {% else %}
+                            <form method="POST" class="form-group">
+                                {% csrf_token %}
+                                {{form|crispy}}
+                                <button type="submit" value="{{solution.id}}" name="submit" class="btn btn-success">Submit</button>
+                            </form>
+                        
+                    {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
     
     {% else %}
         Login <a href="/login">here.</a>
