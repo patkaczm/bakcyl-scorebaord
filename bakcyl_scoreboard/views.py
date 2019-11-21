@@ -22,6 +22,7 @@ def task_detail_tutor(response, task_id):
                 score.comment = form.cleaned_data['comment']
                 score.mark = form.cleaned_data['score']
                 score.tutor = response.user
+                score.isScored = True
                 score.save()
                 print(scored_solution)
         else:
