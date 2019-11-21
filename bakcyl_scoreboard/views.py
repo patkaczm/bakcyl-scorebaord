@@ -31,8 +31,8 @@ def task_detail_tutor(response, task_id):
 
     all_tasks = Task.objects.all()
     task = Task.objects.get(id=task_id)
-    unscored = Solution.objects.filter(task=task, score__isScored=False)
-    scored = Solution.objects.filter(task=task, score__isScored=True)
+    unscored = Solution.objects.filter(task=task, score__isScored=False, isFinal=True)
+    scored = Solution.objects.filter(task=task, score__isScored=True, isFinal=True)
     
     form = CommentForm()
 
