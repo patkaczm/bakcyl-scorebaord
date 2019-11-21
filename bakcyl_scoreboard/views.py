@@ -67,19 +67,32 @@ def task_detail_user(response, task_id):
             solution.save()
     else:
         form = SolutionForm()
-        
+    
+    user_solutions = Solution.objects.filter(user=response.user)
+    tasks_done = []
+    tasks_notdone = []
+    for s in user_solutions:
+        if s.isFinal:
+            tasks_done.append(s.task)
+        else:
+            tasks_notdone.append(s.task)
+    tasks = {"all":Task.objects.all(),
+             "done":tasks_done,
+             "notdone":tasks_notdone}
     if solution and solution.isFinal:
         return render(response, "bakcyl_scoreboard/task_detail.html", {
                                                                     "tasks":Task.objects.all(),
                                                                     "task":task,
                                                                     "solution":solution,
+                                                                    "all":tasks
                                                                     })
     else:
         return render(response, "bakcyl_scoreboard/task_detail.html", {
                                                                     "tasks":Task.objects.all(),
                                                                     "task":task,
                                                                     "solution":solution,
-                                                                    "form":form})
+                                                                    "form":form,
+                                                                    "all":tasks})
 
 def task_detail(response, task_id):
     isTutor = PersonalInfo.objects.get(user=response.user).isTutor

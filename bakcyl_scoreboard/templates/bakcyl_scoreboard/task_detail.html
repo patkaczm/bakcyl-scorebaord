@@ -1,15 +1,9 @@
-{% extends "base.html" %}
+{% extends "task_detail_base.html" %}
 
 {% load static %}
 {% load crispy_forms_tags %}
 
-{% block meta %}
-    <link href="{% static "css/monokai.css" %}" rel="stylesheet" type="text/css">
-{% endblock %}
-
-{% block title%} Dashboard {% endblock %}
-
-{% block content %}
+{% block content_rhs %}
     <div class="shadow p-3 mb-5 bg-white rounded">
         {% if user.is_authenticated %}
             <h5>Your solution for task: <a href={{task.link}}>{{task.name}}</a></h5>
@@ -45,6 +39,18 @@
         {% else %}
             Login <a href="/login">here.</a>
         {% endif %}
-        <script src="{% static "js/rainbow-custom.min.js" %}"></script>
+    </div>
+{% endblock %}
+
+{% block content_lhs %}
+    <div class="list-group">
+        Imcompleted:
+        {% for task in all.notdone %}                          
+            <a href="/task/{{task.id}}" class="list-group-item nounderline list-group-item-danger"> {{task.name}}</a>
+        {% endfor %}
+        Completed:    
+        {% for task in all.done %}                          
+            <a href="/task/{{task.id}}" class="list-group-item nounderline list-group-item-success"> {{task.name}}</a>
+        {% endfor %}
     </div>
 {% endblock %}
