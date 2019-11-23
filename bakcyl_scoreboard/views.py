@@ -79,6 +79,7 @@ def task_detail_user(response, task_id):
     tasks = {"all":Task.objects.all(),
              "done":tasks_done,
              "notdone":tasks_notdone}
+    print(tasks['notdone'])
     if solution and solution.isFinal:
         return render(response, "bakcyl_scoreboard/task_detail.html", {
                                                                     "tasks":Task.objects.all(),
