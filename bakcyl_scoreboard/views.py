@@ -68,18 +68,19 @@ def task_detail_user(response, task_id):
     else:
         form = SolutionForm()
     
-    user_solutions = Solution.objects.filter(user=response.user)
     tasks_done = []
     tasks_notdone = []
-    for s in user_solutions:
-        if s.isFinal:
-            tasks_done.append(s.task)
-        else:
-            tasks_notdone.append(s.task)
+    for t in Task.objects.all():
+        try:
+            Solution.objects.get(user=response.user, task=t, isFinal=True)
+            tasks_done.append(t)
+        except:
+            tasks_notdone.append(t)
+
     tasks = {"all":Task.objects.all(),
              "done":tasks_done,
              "notdone":tasks_notdone}
-    print(tasks['notdone'])
+
     if solution and solution.isFinal:
         return render(response, "bakcyl_scoreboard/task_detail.html", {
                                                                     "tasks":Task.objects.all(),
