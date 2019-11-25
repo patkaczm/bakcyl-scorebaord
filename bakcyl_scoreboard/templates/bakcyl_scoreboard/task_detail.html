@@ -40,21 +40,69 @@
             Login <a href="/login">here.</a>
         {% endif %}
     </div>
+
 {% endblock %}
 
 {% block content_lhs %}
-    <div class="list-group">
-        {% if all.notdone %}
-            Imcompleted:
-            {% for task in all.notdone %}                          
-                <a href="/task/{{task.id}}" class="list-group-item nounderline list-group-item-danger"> {{task.name}}</a>
-            {% endfor %}
-        {% endif %}
-        {% if all.done %}
-            Completed:    
-            {% for task in all.done %}                          
-                <a href="/task/{{task.id}}" class="list-group-item nounderline list-group-item-success"> {{task.name}}</a>
-            {% endfor %}
-        {% endif %}
+<div id="accordion">
+    {% if all.mandatory.notdone or all.mandatory.done %}
+    <div class="card">
+        <div class="card-header" id="headingOne">
+            <h5 class="mb-0">
+                <button class="btn btn-link nounderline" data-toggle="collapse" data-target="#mandarotyTasks" aria-expanded="true" aria-controls="mandarotyTasks">
+                Mandatory Tasks
+                </button>
+            </h5>
+        </div>
+        <div id="mandarotyTasks" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+            <div class="card-body">
+                <div class="list-group">
+                        {% if all.mandatory.notdone %}
+                            Imcompleted:
+                            {% for task in all.mandatory.notdone %}                          
+                                <a href="/task/{{task.id}}" class="list-group-item nounderline list-group-item-danger"> {{task.name}}</a>
+                            {% endfor %}
+                        {% endif %}
+                        {% if all.mandatory.done %}
+                            Completed:    
+                            {% for task in all.mandatory.done %}                          
+                                <a href="/task/{{task.id}}" class="list-group-item nounderline list-group-item-success"> {{task.name}}</a>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+            </div>
+        </div>
     </div>
+    {% endif %}
+    {% if all.obligatory.notdone or all.obligatory.done %}
+    <div class="card">
+        <div class="card-header" id="headingOne">
+            <h5 class="mb-0">
+                <button class="btn btn-link nounderline" data-toggle="collapse" data-target="#obligatoryTasks" aria-expanded="true" aria-controls="obligatoryTasks">
+                Obligatory Tasks
+                </button>
+            </h5>
+        </div>
+        <div id="obligatoryTasks" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+            <div class="card-body">
+                <div class="list-group">
+                        {% if all.notdone %}
+                            Imcompleted:
+                            {% for task in all.obligatory.notdone %}                          
+                                <a href="/task/{{task.id}}" class="list-group-item nounderline list-group-item-danger"> {{task.name}}</a>
+                            {% endfor %}
+                        {% endif %}
+                        {% if all.done %}
+                            Completed:    
+                            {% for task in all.obligatory.done %}                          
+                                <a href="/task/{{task.id}}" class="list-group-item nounderline list-group-item-success"> {{task.name}}</a>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
 {% endblock %}

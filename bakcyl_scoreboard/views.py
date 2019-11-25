@@ -78,8 +78,15 @@ def task_detail_user(response, task_id):
             tasks_notdone.append(t)
 
     tasks = {"all":Task.objects.all(),
-             "done":tasks_done,
-             "notdone":tasks_notdone}
+             "mandatory":{
+                "done":tasks_done,
+                "notdone":tasks_notdone,
+             },
+             "obligatory":{
+                 "done":"",
+                 "notdone":"",
+             },
+             }
 
     if solution and solution.isFinal:
         return render(response, "bakcyl_scoreboard/task_detail.html", {
