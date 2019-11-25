@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+from django.utils.deconstruct import deconstructible
+
+@deconstructible
 class PersonalInfo(models.Model):
     Beginner = 0
     Advanced = 1
