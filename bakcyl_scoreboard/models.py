@@ -4,8 +4,8 @@ from django.contrib.auth.models import User
 
 
 class Group():
-    Beginner = 0
-    Advanced = 1
+    Beginner = '0'
+    Advanced = '1'
     
     GROUP_LEVEL = (
         (Beginner, "Początkowa"),
