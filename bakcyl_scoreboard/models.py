@@ -2,10 +2,20 @@ from django.db import models
 from django.contrib.auth.models import User
 # Create your models here.
 
+
+class Group():
+    Beginner = 0
+    Advanced = 1
+    
+    GROUP_LEVEL = (
+        (Beginner, "Początkowa"),
+        (Advanced, "Zaawansowana")
+    )
 class Task(models.Model):
     link = models.URLField()
     name = models.CharField(max_length=120, default=None)
     max_score = models.PositiveIntegerField()
+    group_level = models.CharField(max_length=15, choices=Group.GROUP_LEVEL, default=Group.Beginner)
 
     def __str__(self):
         return self.name
