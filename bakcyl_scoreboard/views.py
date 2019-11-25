@@ -5,6 +5,35 @@ from django.contrib.auth.models import User
 from .forms import SolutionForm, CommentForm
 from register.models import PersonalInfo
 
+def get_tasks(user):
+    userGroupLevel = PersonalInfo.objects.get(user=user).group_level
+    
+    tasks = {"all":Task.objects.all(),
+             "mandatory":{
+                "done":[],
+                "notdone":[],
+             },
+             "obligatory":{
+                 "done":[],
+                 "notdone":[],
+             },
+             }
+
+    for t in Task.objects.all():
+        if t.group_level == userGroupLevel:
+            try:
+                Solution.objects.get(user=user, task=t, isFinal=True)
+                tasks['mandatory']['done'].append(t)
+            except:
+                tasks['mandatory']['notdone'].append(t)
+        else:
+            try:
+                Solution.objects.get(user=user, task=t, isFinal=True)
+                tasks['obligatory']['done'].append(t)
+            except:
+                tasks['obligatory']['notdone'].append(t)
+    return tasks
+
 def index(request):
     tasks = Task.objects.all()
     return render(request, "bakcyl_scoreboard/dashboard.html", {"tasks":tasks})
@@ -68,25 +97,7 @@ def task_detail_user(response, task_id):
     else:
         form = SolutionForm()
     
-    tasks_done = []
-    tasks_notdone = []
-    for t in Task.objects.all():
-        try:
-            Solution.objects.get(user=response.user, task=t, isFinal=True)
-            tasks_done.append(t)
-        except:
-            tasks_notdone.append(t)
-
-    tasks = {"all":Task.objects.all(),
-             "mandatory":{
-                "done":tasks_done,
-                "notdone":tasks_notdone,
-             },
-             "obligatory":{
-                 "done":"",
-                 "notdone":"",
-             },
-             }
+    tasks = get_tasks(response.user)
 
     if solution and solution.isFinal:
         return render(response, "bakcyl_scoreboard/task_detail.html", {
