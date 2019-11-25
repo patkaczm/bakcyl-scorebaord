@@ -26,31 +26,7 @@
         <div class="row justify-content-center">
             <div class="col-8">
                     <h1 class="mt-2">Bakcyl ScoreBoard</h1>
-                    <div class="navpane">
-                            <ul class="nav nav-pills">
-                                <li class="nav-item">
-                                    <a class="nav-link active" href="/">Home</a>
-                                </li>
-                                {% if user.is_authenticated %}
-                                {% block navtask %}
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">Tasks</a>
-                                    <div class="dropdown-menu ">
-                                        {% for task in tasks %}                                    
-                                        <a href="/task/{{task.id}}" class="dropdown-item"> {{task.name}}</a>
-                                        {% endfor %}
-                                    </div>
-                                </li>
-                                {% endblock %}
-                                <li class="nav-item">
-                                        <a class="nav-link" href="/logout">Logout</a>
-                                {% else %}
-                                <li class="nav-item"></li>
-                                        <a class="nav-link" href="/login">Login</a>
-                                {% endif %}
-                                </li>
-                            </ul>     
-                        </div>
+                    {% include "navbar_base.html" with tasks=tasks  %}
                     <hr class="mt-0 mb-4">
             </div>
         </div>
