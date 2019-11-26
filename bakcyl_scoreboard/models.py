@@ -8,8 +8,8 @@ class Group():
     Advanced = '1'
     
     GROUP_LEVEL = (
-        (Beginner, "Początkowa"),
-        (Advanced, "Zaawansowana")
+        (Beginner, "Beginner"),
+        (Advanced, "Advanced")
     )
 class Task(models.Model):
     link = models.URLField()

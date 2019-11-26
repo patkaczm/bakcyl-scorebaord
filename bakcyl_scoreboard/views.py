@@ -1,8 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import Task, Solution, Score
 from django.contrib.auth.models import User
-from .forms import SolutionForm, CommentForm
+from .forms import SolutionForm, CommentForm, TaskForm
 from register.models import PersonalInfo
 
 def get_tasks(user):
@@ -81,7 +81,7 @@ def task_detail_user(response, task_id):
         solution=None
     
     if response.method == "POST":
-        form = form = SolutionForm(response.POST)
+        form = SolutionForm(response.POST)
         if form.is_valid():
             if not solution:
                 solution = Solution()
@@ -120,3 +120,20 @@ def task_detail(response, task_id):
         return task_detail_user(response, task_id)
     else:
         return task_detail_tutor(response, task_id)
+
+def add_task(response):
+    if (response.method == 'POST'):
+        form = TaskForm(response.POST)
+        if (form.is_valid()):
+            task = Task()
+            task.group_level = form.cleaned_data['group_level']
+            task.link = form.cleaned_data['link']
+            task.max_score = form.cleaned_data['max_score']
+            task.name = form.cleaned_data['name']
+            task.save()
+            return redirect("add_task")
+    
+    form = TaskForm()
+    return render(response, "bakcyl_scoreboard/add_task.html", {
+                                                                "tasks":Task.objects.all(),
+                                                                "form":form})
