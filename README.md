@@ -1,3 +1,3 @@
 @todo:
-    - imporove dashboard view 
-    - register for advanced group
+    - imporove dashboard view
+    - add view with statistics <done tasks, points, ...>
