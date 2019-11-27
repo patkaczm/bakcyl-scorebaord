@@ -70,7 +70,7 @@ def dashboard_tutor(request):
                                                                     })
 
 def task_detail_tutor(response, task_id):
-    if not request.user.is_authenticated:
+    if not response.user.is_authenticated:
         return redirect("login")
     
     solutuion = None
@@ -107,7 +107,7 @@ def task_detail_tutor(response, task_id):
                                                                          "solution":solutuion})
 
 def task_detail_user(response, task_id):
-    if not request.user.is_authenticated:
+    if not response.user.is_authenticated:
         return redirect("login")
     
     task = Task.objects.get(id=task_id)
@@ -152,7 +152,7 @@ def task_detail_user(response, task_id):
                                                                     "all":tasks})
 
 def task_detail(response, task_id):
-    if not request.user.is_authenticated:
+    if not response.user.is_authenticated:
         return redirect("login")
     
     isTutor = PersonalInfo.objects.get(user=response.user).isTutor
@@ -162,7 +162,7 @@ def task_detail(response, task_id):
         return task_detail_tutor(response, task_id)
 
 def add_task(response):
-    if not request.user.is_authenticated:
+    if not response.user.is_authenticated:
         return redirect("login")
     
     if not PersonalInfo.objects.get(user=response.user).isTutor:
