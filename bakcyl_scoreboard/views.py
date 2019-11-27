@@ -132,7 +132,7 @@ def add_task(response):
             task.name = form.cleaned_data['name']
             task.save()
             return redirect("add_task")
-    
+
     form = TaskForm()
     return render(response, "bakcyl_scoreboard/add_task.html", {
                                                                 "tasks":Task.objects.all(),
