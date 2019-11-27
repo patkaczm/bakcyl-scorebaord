@@ -38,19 +38,23 @@ def get_tasks(user):
     tasks['obligatory']['notdonecount']=len(tasks['obligatory']["notdone"])
     return tasks
 
-def index(request):
-    if not request.user.is_authenticated:
+def index(response):
+    if not response.user.is_authenticated:
         return redirect("login")
 
     tasks = Task.objects.all()
-    all = get_tasks(request.user)
-    return render(request, "bakcyl_scoreboard/dashboard.html", {"tasks":tasks,
+    all = get_tasks(response.user)
+    return render(response, "bakcyl_scoreboard/dashboard.html", {"tasks":tasks,
                                                                 "all":all})
 
 def dashboard_tutor(request):
     if not request.user.is_authenticated:
         return redirect("login")
-    
+
+    isTutor = PersonalInfo.objects.get(user=request.user).isTutor
+    if not isTutor:
+        return redirect("dashboard")
+
     students = PersonalInfo.objects.filter(isTutor=False)
     selectedStudent = None
     selectedTask = None
@@ -232,3 +236,25 @@ def task_chart_data(response, task_id):
         'todo': todo,
         'score': score,
     })
+
+def maininfo_chart_data(response):
+    students = PersonalInfo.objects.filter(isTutor=False)
+
+    ret = {
+        'students':[],
+        'tasksDone':[],
+        'points':[],
+    }
+
+    for student in students:
+        solutions = Solution.objects.filter(user = student.user, isFinal=True)
+        points = 0
+        tasksDone = solutions.count()
+        for solution in solutions:
+            if solution.score.isScored:
+                points += solution.score.mark
+        ret['students'].append("{} {}".format(student.first_name, student.last_name))
+        ret['tasksDone'].append(tasksDone)
+        ret['points'].append(points)
+
+    return JsonResponse(ret)
