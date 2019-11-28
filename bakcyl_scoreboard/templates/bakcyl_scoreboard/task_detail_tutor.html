@@ -9,18 +9,18 @@
             <div class="card-header" id="headingOne">
                 <h5 class="mb-0">
                     <button class="btn btn-link nounderline" data-toggle="collapse" data-target="#unscored" aria-expanded="true" aria-controls="unscored"}>
-                    Uncored <span class="badge badge-pill badge-primary">{{unscored.count}}</span>
+                    Unscored <span class="badge badge-pill badge-primary">{{unscored|length }}</span>
                     </button>
                 </h5>
             </div>
-            <div id="unscored" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+            <div id="unscored" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
                 {% if unscored %}
                 <div class="card-body">
                     <div class="list-group">
                         {% for solution in unscored %}
                             <form method="POST" class="form-group ">
                                 {% csrf_token %}
-                                <button type="submit" value="{{solution.id}}" name="showSolution" class="list-group-item list-group-item-action list-group-item-primary">{{solution.user.username}}</button>
+                                <button type="submit" value="{{solution.unscored.id}}" name="showSolution" class="list-group-item list-group-item-action list-group-item-primary">{{solution.fullName}}</button>
                             </form>
                         {% endfor %}
                     </div>

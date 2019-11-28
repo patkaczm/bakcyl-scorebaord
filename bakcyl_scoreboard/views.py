@@ -101,14 +101,21 @@ def task_detail_tutor(response, task_id):
     unscored = Solution.objects.filter(task=task, score__isScored=False, isFinal=True)
     scored = Solution.objects.filter(task=task, score__isScored=True, isFinal=True)
     tmp = []
-    for score in scored:
-        pi = PersonalInfo.objects.get(user=response.user)
+    for solution in scored:
+        pi = PersonalInfo.objects.get(user=solution.user)
         tmp.append({
-            "scored":score,
+            "scored":solution,
             "fullName":pi.first_name + ' ' + pi.last_name,
         })
-
     scored = tmp
+    tmp = []
+    for solution in unscored:
+        pi = PersonalInfo.objects.get(user=solution.user)
+        tmp.append({
+            "unscored":solution,
+            "fullName":pi.first_name + ' ' + pi.last_name,
+        })
+    unscored = tmp
 
     form = CommentForm()
 
