@@ -10,18 +10,7 @@
 {% block content_rhs %}
     <div class="shadow p-3 mb-5 bg-white rounded">
         {% if user.is_authenticated %}
-            <div class="row justify-content-center">
-                <div class="col">
-                    <div class="row justify-content-center">
-                        {% include "task_chart_base.html" with title="Mandatory Tasks" id="mandatoryTasksChart" tasks='mandatory' %}
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="row justify-content-center">
-                        {% include "task_chart_base.html" with title="Obligatory Tasks" id="obligatoryTasksChart" tasks='obligatory' %}
-                    </div>
-                </div>
-            </div>
+            {% include "task_chart_user_view.html" %}
         {% else %}
             Login <a href="/login">here.</a>
         {% endif %}

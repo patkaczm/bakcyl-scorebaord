@@ -10,3 +10,60 @@
         </div>
     </div>
 </div>
+<div class="row justify-content-center mt-4">
+        <canvas class="mt-4" id="tasksInfo" width="250" height="100"></canvas>
+</div>
+
+<script type="text/javascript">
+    var endpoint = '{{user}}'+'/data/tasks';
+    var data = [];
+    $.ajax({
+            method:"GET",
+            url: endpoint,
+            success: function(data) {
+                console.log(data)
+                
+                var coloR = [];
+                var labelS = [];
+                var datA = [];
+                var dynamicColors = function() {
+                    var r = Math.floor(Math.random() * 255);
+                    var g = Math.floor(Math.random() * 255);
+                    var b = Math.floor(Math.random() * 255);
+                    return "rgb(" + r + "," + g + "," + b + ")";
+                };
+
+                for (var i in data.tasks) {
+                    labelS.push(data.tasks[i].name);
+                    datA.push(data.tasks[i].points);
+                    coloR.push(dynamicColors());
+                }
+
+                var ctx = document.getElementById("tasksInfo")
+                var myBarChart = new Chart(ctx, {
+                    type: 'horizontalBar',
+                    data: {
+                    labels: labelS,
+                    datasets: [
+                        {
+                        label: "Points",
+                        backgroundColor: coloR,
+                        data: datA,
+                        }
+                    ]
+                    },
+                    options: {
+                    legend: { display: false },
+                    title: {
+                        display: true,
+                        responsive: false,
+                        text: 'Student score'
+                    }
+                    }
+                }); 
+            },
+            error: function(error_data) {
+                console.log(error_data)
+            }
+    })
+</script>

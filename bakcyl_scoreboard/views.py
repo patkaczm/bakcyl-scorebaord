@@ -100,7 +100,16 @@ def task_detail_tutor(response, task_id):
     task = Task.objects.get(id=task_id)
     unscored = Solution.objects.filter(task=task, score__isScored=False, isFinal=True)
     scored = Solution.objects.filter(task=task, score__isScored=True, isFinal=True)
-    
+    tmp = []
+    for score in scored:
+        pi = PersonalInfo.objects.get(user=response.user)
+        tmp.append({
+            "scored":score,
+            "fullName":pi.first_name + ' ' + pi.last_name,
+        })
+
+    scored = tmp
+
     form = CommentForm()
 
     return render(response, "bakcyl_scoreboard/task_detail_tutor.html", {"tasks":all_tasks,
@@ -194,6 +203,19 @@ def user_chart_data(response, user):
     m_todo = len(tasks['mandatory']['notdone'])
     o_done = len(tasks['obligatory']['done'])
     o_todo = len(tasks['obligatory']['notdone'])
+    info = []
+    
+    for task in tasks['all']:
+        tmp = {}
+        tmp['name'] = task.name
+        points = 0
+        try:
+            points = Solution.objects.get(user = User.objects.get(username=user), task = task)
+            points = points.score.mark
+        except: pass
+        tmp['points'] = points
+        info.append(tmp)
+
 
     return JsonResponse({
         'mandatory':{
@@ -204,12 +226,17 @@ def user_chart_data(response, user):
             'done':o_done,
             'todo':o_todo,
         },
+        'tasks':info,
     })
 
 def task_chart_data(response, task_id):
     task = Task.objects.get(id=task_id)
 
-    done = Solution.objects.filter(task=task, isFinal = True).count()
+    done = 0
+    for solution in Solution.objects.filter(task=task, isFinal = True):
+        if not PersonalInfo.objects.get(user=solution.user).isTutor:
+            done += 1
+
     students = PersonalInfo.objects.filter(isTutor=False)
     students_count = students.count()
     todo = students_count - done
