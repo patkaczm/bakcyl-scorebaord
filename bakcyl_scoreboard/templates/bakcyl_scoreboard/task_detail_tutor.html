@@ -4,34 +4,64 @@
 {% load crispy_forms_tags %}
 
 {% block content_lhs%}
-    {% if unscored %}
-        Unscored: <span class="badge badge-pill badge-primary">{{unscored.count}}</span>
-        {% for solution in unscored %}
-                <form method="POST" class="form-group ">
-                    {% csrf_token %}
-                    <button type="submit" value="{{solution.id}}" name="showSolution" class="list-group-item list-group-item-action">{{solution.user.username}}</button>
-                </form>
-        {% endfor %}
-    {% endif %}
-    {% if scored %}
-        Scored: <span class="badge badge-pill badge-primary">{{scored.count}}</span>
-        {% for solution in scored %}
-                <form method="POST" class="form-group ">
-                    {% csrf_token %}
-                    <button type="submit" value="{{solution.id}}" name="showSolution" class="list-group-item list-group-item-action">{{solution.user.username}}</button>
-                </form>
-        {% endfor %}
-    {% endif %}
+    <div id="accordion">
+        <div class="card">
+            <div class="card-header" id="headingOne">
+                <h5 class="mb-0">
+                    <button class="btn btn-link nounderline" data-toggle="collapse" data-target="#unscored" aria-expanded="true" aria-controls="unscored"}>
+                    Uncored <span class="badge badge-pill badge-primary">{{unscored.count}}</span>
+                    </button>
+                </h5>
+            </div>
+            <div id="unscored" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                {% if unscored %}
+                <div class="card-body">
+                    <div class="list-group">
+                        {% for solution in unscored %}
+                            <form method="POST" class="form-group ">
+                                {% csrf_token %}
+                                <button type="submit" value="{{solution.id}}" name="showSolution" class="list-group-item list-group-item-action list-group-item-primary">{{solution.user.username}}</button>
+                            </form>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header" id="headingOne">
+                <h5 class="mb-0">
+                    <button class="btn btn-link nounderline" data-toggle="collapse" data-target="#scored" aria-expanded="true" aria-controls="scored"}>
+                    Scored <span class="badge badge-pill badge-primary">{{scored.count}}</span>
+                    </button>
+                </h5>
+            </div>
+            <div id="scored" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                {% if scored %}
+                <div class="card-body">
+                    <div class="list-group">
+                        {% for solution in scored %}
+                            <form method="POST" class="form-group ">
+                                {% csrf_token %}
+                                <button type="submit" value="{{solution.id}}" name="showSolution" class="list-group-item list-group-item-action list-group-item-primary">{{solution.user.username}}</button>
+                            </form>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block content_rhs%}
     {% if solution %}
         <div class="shadow-sm p-3 mb-5 bg-white rounded">
         From: {{solution.user.username}}      
-        <pre><code data-language="c">{{solution.code}}</code></pre>
+        <pre class="line-numbers"><code class="language-cpp">{{solution.code}}</code></pre>
         {% if solution.score.isScored %}
             Comment:
-            <pre><code data-language="c">{{solution.score.comment}}</code></pre>
+            <pre class="line-numbers"><code class="language-cpp">{{solution.score.comment}}</code></pre>
             Score:
             {{solution.score.mark}} / {{task.max_score}}
             <br>Tutor:

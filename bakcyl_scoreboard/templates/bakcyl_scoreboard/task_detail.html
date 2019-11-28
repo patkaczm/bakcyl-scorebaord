@@ -9,7 +9,7 @@
             <h5>Your solution for task: <a href={{task.link}}>{{task.name}}</a></h5>
             
             {% if solution and not solution.isFinal %}
-                <pre><code data-language="c">{{solution.code}}</code></pre>
+                <pre class="line-numbers"><code class="language-cpp">{{solution.code}}</code></pre>
                 
                 <form method="POST" class="form-group">
                         {% csrf_token %}
@@ -20,9 +20,9 @@
             
             {% elif solution %}
             
-                <pre><code data-language="c">{{solution.code}}</code></pre>
+                <pre class="line-numbers"><code class="language-cpp">{{solution.code}}</code></pre>
                 {% if solution.score.isScored %}
-                    <pre><code data-language="c">{{solution.score.comment}}</code></pre>
+                    <pre class="line-numbers"><code class="language-cpp">{{solution.score.comment}}</code></pre>
                     Score: {{solution.score.mark}}/{{task.max_score}}
                     <br>Tutor: {{solution.score.tutor}}
                 {% endif %}

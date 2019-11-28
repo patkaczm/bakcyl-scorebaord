@@ -5,6 +5,7 @@
 
 {% block meta %}
     <link href="{% static "css/monokai.css" %}" rel="stylesheet" type="text/css">
+    <link href="{% static "css/prism.css" %}" rel="stylesheet" type="text/css">
 {% endblock %}
 
 {% block title%} Dashboard {% endblock %}
@@ -39,5 +40,5 @@
     {% else %}
         Login <a href="/login">here.</a>
     {% endif %}
-    <script src="{% static "js/rainbow-custom.min.js" %}"></script>
+    <script src="{% static "js/prism.js" %}"></script>
 {% endblock %}
