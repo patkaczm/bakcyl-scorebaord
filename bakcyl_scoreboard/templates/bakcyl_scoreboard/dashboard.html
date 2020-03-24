@@ -3,12 +3,107 @@
 {% load static %}
 {% load crispy_forms_tags %}
 
-{% block header %}
-    <h3> Hello {{user}} </h3>
-{% endblock %}
-
-{% block task_info %}
-    <div class="shadow p-3 mb-5 bg-white rounded"style="width: 100%;">
-
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="shadow-sm p-3 mb-3 bg-white rounded col">
+            <div class="row justify-content-center">
+                <div class="col">
+                    <canvas class="mt-4" id="{{ user }}" width="250" height="250"></canvas>
+                </div>
+                <div class="col">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                        <tr>
+                            <th scope="col">Points</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>{{ points }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
+    <div class="row justify-content-center">
+        <div class="shadow-sm p-3 mb-3 bg-white rounded col">
+            <h3>Details</h3>
+            <table class="table table-striped table-hover">
+                <thead>
+                <tr>
+                    <th scope="col">Task</th>
+                    <th scope="col">Kyu</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for task in task_data %}
+                    {% for task_detail in task.tasks %}
+                        <tr>
+                            <td>{{ task_detail.name }}</td>
+                            <td>{{ task.kyu }}</td>
+                        </tr>
+                    {% endfor %}
+                {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+
+    <script type="text/javascript">
+        var data = {{ task_data | safe }};
+        var kyus = [];
+        var tasksPerKyu = [];
+
+        for (i = 0; i < data.length; i++) {
+            kyus.push("Kyu: " + data[i]["kyu"]);
+            tasksPerKyu.push(data[i]["tasks"].length);
+        }
+
+        console.log(data);
+
+        var coloR = [];
+        var dynamicColors = function () {
+            var r = Math.floor(Math.random() * 255);
+            var g = Math.floor(Math.random() * 255);
+            var b = Math.floor(Math.random() * 255);
+            return "rgb(" + r + "," + g + "," + b + ")";
+        };
+
+        for (var i in kyus) {
+            coloR.push(dynamicColors());
+        }
+
+        var ctx = document.getElementById("{{user}}");
+        var myChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: kyus,
+                datasets: [{
+                    label: '',
+                    data: tasksPerKyu,
+                    backgroundColor: coloR,
+                    borderColor: "black",
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                cutoutPercentage: 40,
+                layout: {
+                    padding: {
+                        bottom: 15,
+                    }
+                },
+                responsive: false,
+                title: {
+                    display: true,
+                    text: "Completed tasks",
+                },
+            }
+        });
+
+    </script>
 {% endblock %}
