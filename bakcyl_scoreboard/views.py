@@ -47,6 +47,23 @@ def dashboard(request):
         "points": points
     })
 
+def user_dashboard(request, user_name):
+    if not request.user.is_authenticated:
+        return redirect("login")
+
+    isTutor = PersonalInfo.objects.get(user=request.user).isTutor
+    if not isTutor:
+        return redirect("dashboard")
+
+    user = PersonalInfo.objects.get(codewars_name=user_name).user
+
+    data = getUserTasksData(user)
+    points = calculatePoints(data)
+
+    return render(request, "bakcyl_scoreboard/dashboard.html", {
+        "task_data": data,
+        "points": points
+    })
 
 def dashboard_tutor(request):
     if not request.user.is_authenticated:
