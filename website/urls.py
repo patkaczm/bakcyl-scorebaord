@@ -20,7 +20,6 @@ from register import views as reg_v
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('bakcyl_scoreboard.urls')),
-    path('register/<group_hash>', reg_v.register, name="registerGroup"),
     path('register/', reg_v.register, name='register'),
     path('', include('django.contrib.auth.urls')),
 ]
