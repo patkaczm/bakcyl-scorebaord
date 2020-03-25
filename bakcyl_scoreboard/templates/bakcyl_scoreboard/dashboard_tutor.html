@@ -87,7 +87,7 @@
 
                 for (let i in data) {
                     kyuLabel.push("Kyu: " + data[i]["kyu"]);
-                    kyuData.push(data[i]["count"]);
+                    kyuData.push(data[i]["unique"]);
                 }
                 for (var i in kyuLabel) {
                     coloR.push(dynamicColors());
@@ -156,7 +156,7 @@
                 }
 
                 var ctx1 = document.getElementById("3");
-                height = 125 * users.length
+                height = 20 * users.length
                 ctx1.style.height = height + "px";
 
 
@@ -253,7 +253,7 @@
                 }
 
                 var ctx1 = document.getElementById("4");
-                height = 15 * tasks.length
+                height = 25 * tasks.length
                 ctx1.style.height = height + "px";
 
 

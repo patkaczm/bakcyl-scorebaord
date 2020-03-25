@@ -15,7 +15,7 @@ def getUserTasksData(user):
     for kyu in sorted(kyus):
         ret.append({
             "kyu": kyu,
-            "tasks": [task.name for task in CwTask.objects.filter(user=user).filter(kyu=kyu)]
+            "tasks": [task.name for task in CwTask.objects.filter(user__personalinfo__isTutor=False).filter(user=user).filter(kyu=kyu)]
         })
     print(ret)
     return ret
@@ -45,11 +45,13 @@ def all_users_data(request):
     ret = []
     for user in User.objects.all():
         if not PersonalInfo.objects.get(user=user).isTutor:
-            all_user_kyus = [kyu["kyu"] for kyu in CwTask.objects.filter(user=user).order_by().values('kyu').distinct()]
+            all_user_kyus = [kyu["kyu"] for kyu in CwTask.objects.filter(user__personalinfo__isTutor=False).filter(user=user).order_by().values('kyu').distinct()]
             details = {}
 
             for kyu in all_user_kyus:
-                details[kyu] = CwTask.objects.all().filter(kyu=kyu).filter(user=user).count()
+                count_ = CwTask.objects.all().filter(kyu=kyu).filter(user=user).count()
+                if count_ > 0:
+                    details[kyu] = count_
 
             ret.append({"name": user.username,
                        "kyuCount": details})
@@ -61,10 +63,13 @@ def task_kyu_count(request):
     ret = []
 
     for kyu in all_kyus:
-        ret.append({
-            "kyu": kyu,
-            "count": CwTask.objects.all().filter(kyu=kyu).count()
-        })
+        count_ = CwTask.objects.all().filter(user__personalinfo__isTutor=False).filter(kyu=kyu).count()
+        if count_ > 0:
+            ret.append({
+                "kyu": kyu,
+                "count": count_,
+                "unique": CwTask.objects.all().filter(user__personalinfo__isTutor=False).filter(kyu=kyu).order_by().values('name').distinct().count(),
+            })
 
     return JsonResponse(ret, safe=False)
 
@@ -75,11 +80,13 @@ def task_all(request):
     ret = []
 
     for name in all_taks_names:
-        ret.append({
-            "name": name,
-            "kyu": CwTask.objects.filter(name=name)[0].kyu,
-            "count": CwTask.objects.all().filter(name=name).count()
-        })
+        count_ = CwTask.objects.all().filter(user__personalinfo__isTutor=False).filter(name=name).count()
+        if count_ > 0:
+            ret.append({
+                "name": name,
+                "kyu": CwTask.objects.filter(name=name)[0].kyu,
+                "count": count_
+            })
 
     return JsonResponse(ret, safe=False)
 
