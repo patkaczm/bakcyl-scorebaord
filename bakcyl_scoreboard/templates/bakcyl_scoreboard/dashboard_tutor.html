@@ -1,82 +1,320 @@
 {% extends "base.html" %}
 
-{% load static %}
-{% load crispy_forms_tags %}
-
-{% block header %}
-    <h3> <a class="nounderline" href="/dt">Dashboard </a></h3>
-{% endblock %}
-
-{% block content_rhs %}
-    <div class="shadow p-3 mb-5 bg-white rounded">
-        {% if user.is_authenticated %}
-            {% if selectedStudent %}
-                <div class="row justify-content-center mb-4">
-                    <h3> Task info for: {{ selectedStudent }}</h3>
-                </div>
-                    {% include "task_chart_user_view.html" with user=selectedStudent %}
-            {% elif selectedTask %}
-                <div class="row justify-content-center mb-4">
-                    <h3> Task info for: {{ selectedTask.name }}</h3>
-                </div>
-                    {% include "task_chart_task_view.html" with task=selectedTask %}
-            {% else %}
-                <div class="row justify-content-center mb-4">
-                    <h3> Main info</h3>
-                </div>
-                    {% include "task_chart_main_view.html" %}
-            {% endif %}
-        {% else %}
-            Login <a href="/login">here.</a>
-        {% endif %}
-    </div>
-{% endblock %}
-
-{% block content_lhs %}
-<!-- @todo use template for this tasks -->
-<div id="accordion">
-    <div class="card">
-        <div class="card-header" id="headingOne">
-            <h5 class="mb-0">
-                <button class="btn btn-link nounderline" data-toggle="collapse" data-target="#alltask" aria-expanded="true" aria-controls="alltask">
-                Tasks
-                </button>
-            </h5>
+{% block content %}
+    <div class="row justify-content-center shadow-sm p-3 mb-3 bg-white rounded">
+        <div class="col">
+            <canvas id="1" style="width: 100%"></canvas>
         </div>
-        <div id="alltask" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-            <div class="card-body">
-                <div class="list-group">
-                    {% for task in tasks %}
-                        <form method="POST" class="form-group m-0">
-                                {% csrf_token %}
-                                <button type="submit" value="{{task.id}}" name="showStatisticsTask" class="list-group-item list-group-item-action list-group-item-primary">{{task.name}}</button>
-                        </form>
-                    {% endfor %}
-                </div>
-            </div>
+        <div class="col">
+            <canvas id="2" style="width: 100%"></canvas>
         </div>
     </div>
-    <div class="card">
-            <div class="card-header" id="headingOne">
-                <h5 class="mb-0">
-                    <button class="btn btn-link nounderline" data-toggle="collapse" data-target="#allstudents" aria-expanded="true" aria-controls="allstudents">
-                    Students
-                    </button>
-                </h5>
-            </div>
-            <div id="allstudents" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-                <div class="card-body">
-                    <div class="list-group">
-                        {% for student in students %}
-                            <form method="POST" class="form-group m-0">
-                                    {% csrf_token %}
-                                    <button type="submit" value="{{student.user}}" name="showStatisticsUser" class="list-group-item list-group-item-action list-group-item-primary">{{student.first_name}} {{student.last_name}}</button>
-                            </form>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
+    <div class="row justify-content-center">
+        <div class="shadow-sm p-3 mb-3 bg-white rounded col">
+            <canvas id="3" style="width: 100%"></canvas>
         </div>
-</div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="shadow-sm p-3 mb-3 bg-white rounded col">
+            <canvas id="4" style="width: 100%"></canvas>
+        </div>
+    </div>
 
+    <script type="text/javascript">
+        var dynamicColors = function () {
+            var r = Math.floor(Math.random() * 255);
+            var g = Math.floor(Math.random() * 255);
+            var b = Math.floor(Math.random() * 255);
+            return "rgb(" + r + "," + g + "," + b + ")";
+        };
+
+        $.ajax({
+            method: "GET",
+            url: 'task/kyu-count',
+            success: function (data) {
+                kyuLabel = [];
+                kyuData = [];
+                var coloR = [];
+
+                for (let i in data) {
+                    kyuLabel.push("Kyu: " + data[i]["kyu"]);
+                    kyuData.push(data[i]["count"]);
+                }
+                for (var i in kyuLabel) {
+                    coloR.push(dynamicColors());
+                }
+
+                var ctx = document.getElementById("1");
+                var myChart = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: kyuLabel,
+                        datasets: [{
+                            label: 'Tasks',
+                            data: kyuData,
+                            backgroundColor: coloR,
+                            borderColor: "black",
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        cutoutPercentage: 40,
+                        layout: {
+                            padding: {
+                                bottom: 15,
+                            }
+                        },
+                        responsive: false,
+                        title: {
+                            display: true,
+                            text: "Number of tasks with kyu done",
+                        },
+                    }
+                });
+            },
+            error: function (error_data) {
+                console.log(error_data)
+            }
+        })
+
+        $.ajax({
+            method: "GET",
+            url: 'task/kyu-count',
+            success: function (data) {
+                kyuLabel = [];
+                kyuData = [];
+                var coloR = [];
+
+                for (let i in data) {
+                    kyuLabel.push("Kyu: " + data[i]["kyu"]);
+                    kyuData.push(data[i]["count"]);
+                }
+                for (var i in kyuLabel) {
+                    coloR.push(dynamicColors());
+                }
+
+                var ctx = document.getElementById("2");
+                var myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: kyuLabel,
+                        datasets: [{
+                            label: 'Tasks',
+                            data: kyuData,
+                            backgroundColor: coloR,
+                            borderColor: "black",
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        cutoutPercentage: 40,
+                        layout: {
+                            padding: {
+                                bottom: 15,
+                            }
+                        },
+                        responsive: false,
+                        title: {
+                            display: true,
+                            text: "Your dreamed chart can be here. Contact me :)",
+                        },
+                        legend: {
+                            display: false,
+                        }
+                    }
+                });
+            },
+            error: function (error_data) {
+                console.log(error_data)
+            }
+        })
+
+        $.ajax({
+            method: "GET",
+            url: 'user/all',
+            success: function (data) {
+                console.log(data);
+
+                preparedData = {};
+                let users = [];
+                let userKyu = [[], [], [], [], [], [], [], []];
+
+                for (let i in data) {
+                    users.push(data[i]["name"])
+                    for (let j = 0; j < userKyu.length; j++) {
+                        if (!(j in data[i]["kyuCount"])) {
+                            userKyu[j].push(0);
+                        } else {
+                            userKyu[j].push(data[i]["kyuCount"][j]);
+                        }
+                    }
+                }
+
+                let coloR = [];
+                for (let i = 0; i < userKyu.length; i++) {
+                    coloR.push(dynamicColors())
+                }
+
+                var ctx1 = document.getElementById("3");
+                height = 125 * users.length
+                ctx1.style.height = height + "px";
+
+
+                var myBarChart = new Chart(ctx1, {
+                    type: 'bar',
+                    data: {
+                        labels: users,
+                        datasets: [
+                            {
+                                label: ["Kyu: 1"],
+                                backgroundColor: coloR[0],
+                                data: userKyu[0],
+                            },
+                            {
+                                label: ["Kyu: 2"],
+                                backgroundColor: coloR[1],
+                                data: userKyu[1],
+                            },
+                            {
+                                label: ["Kyu: 3"],
+                                backgroundColor: coloR[2],
+                                data: userKyu[2]
+                            },
+                            {
+                                label: ["Kyu: 4"],
+                                backgroundColor: coloR[3],
+                                data: userKyu[3],
+                            },
+                            {
+                                label: ["Kyu: 5"],
+                                backgroundColor: coloR[4],
+                                data: userKyu[4],
+                            },
+                            {
+                                label: ["Kyu: 6"],
+                                backgroundColor: coloR[5],
+                                data: userKyu[5],
+                            },
+                            {
+                                label: ["Kyu: 7"],
+                                backgroundColor: coloR[6],
+                                data: userKyu[6]
+                            },
+                            {
+                                label: ["Kyu: 8"],
+                                backgroundColor: coloR[7],
+                                data: userKyu[7],
+                            }
+                        ]
+                    },
+                    options: {
+                        legend: {display: true},
+                        title: {
+                            display: true,
+                            responsive: false,
+                            text: 'Students done tasks'
+                        },
+                        scales: {
+                            xAxes: [{
+                                stacked: true
+                            }],
+                            yAxes: [{
+                                stacked: true
+                            }]
+                        }
+                    }
+                });
+            },
+            error: function (error_data) {
+                console.log(error_data)
+            }
+        })
+
+        $.ajax({
+            method: "GET",
+            url: 'task/all',
+            success: function (data) {
+                console.log(data);
+
+
+                let tasks = [];
+                let kyus = [];
+                let count = [];
+
+                for (let i in data) {
+                    tasks.push(data[i]["name"]);
+                    kyus.push(data[i]["kyu"]);
+                    count.push(data[i]["count"]);
+                }
+                console.log(kyus)
+                let coloR = [];
+                for (let i = 0; i < tasks.length; i++) {
+                    coloR.push(dynamicColors())
+                }
+
+                var ctx1 = document.getElementById("4");
+                height = 15 * tasks.length
+                ctx1.style.height = height + "px";
+
+
+                var myBarChart = new Chart(ctx1, {
+                    type: 'bar',
+                    data: {
+                        labels: tasks,
+                        datasets: [
+                            {
+                                label: '',
+                                backgroundColor: coloR,
+                                data: count,
+                            }
+                        ]
+                    },
+                    options: {
+                        legend: {display: false},
+                        title: {
+                            display: true,
+                            responsive: false,
+                            text: 'Done tasks (task\'s kyu above)'
+                        },
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        },
+                        events: false,
+                        tooltips: {
+                            enabled: false
+                        },
+                        hover: {
+                            animationDuration: 0
+                        },
+                        animation: {
+                            duration: 1,
+                            onComplete: function () {
+                                var chartInstance = this.chart,
+                                    ctx = chartInstance.ctx;
+                                ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+                                ctx.textAlign = 'center';
+                                ctx.textBaseline = 'bottom';
+
+                                this.data.datasets.forEach(function (dataset, i) {
+                                    var meta = chartInstance.controller.getDatasetMeta(i);
+                                    meta.data.forEach(function (bar, index) {
+                                        var data = kyus[index];
+                                        ctx.fillText(data, bar._model.x, bar._model.y -10);
+                                    });
+                                });
+                            }
+                        }
+                    }
+                });
+            },
+            error: function (error_data) {
+                console.log(error_data)
+            }
+        })
+
+    </script>
 {% endblock %}

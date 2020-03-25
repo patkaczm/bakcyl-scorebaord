@@ -3,30 +3,23 @@ from register.models import PersonalInfo
 import requests
 from django.http import JsonResponse
 from django.contrib.auth.models import User
+from .models import CwTask
+
 
 def getUserTasksData(user):
-    ret_data = {}
-
-    codewars_nick = PersonalInfo.objects.get(user=user).codewars_name
-    tasks = requests.get('https://www.codewars.com/api/v1/users/{}/code-challenges/completed'.format(codewars_nick)).json()['data']
-
-    for task in tasks:
-        if "cpp" in task["completedLanguages"]:
-            task_rank = -requests.get('https://www.codewars.com/api/v1/code-challenges/{}'.format(task['id'])).json()["rank"]["id"]
-
-            if not task_rank in ret_data:
-                ret_data[task_rank] = []
-
-            ret_data[task_rank].append({"name": task["name"],
-                                        "time": task["completedAt"]})
+    kyus = set()
+    for task in CwTask.objects.filter(user=user):
+        kyus.add(task.kyu)
 
     ret = []
-    for kyu in sorted(ret_data.keys()):
+    for kyu in sorted(kyus):
         ret.append({
             "kyu": kyu,
-            "tasks": ret_data[kyu]
+            "tasks": [task.name for task in CwTask.objects.filter(user=user).filter(kyu=kyu)]
         })
+    print(ret)
     return ret
+
 
 def calculatePoints(tasks):
     points = 0
@@ -47,23 +40,54 @@ def dashboard(request):
         "points": points
     })
 
-def user_dashboard(request, user_name):
-    if not request.user.is_authenticated:
-        return redirect("login")
 
-    isTutor = PersonalInfo.objects.get(user=request.user).isTutor
-    if not isTutor:
-        return redirect("dashboard")
+def all_users_data(request):
+    ret = []
+    for user in User.objects.all():
+        if not PersonalInfo.objects.get(user=user).isTutor:
+            all_user_kyus = [kyu["kyu"] for kyu in CwTask.objects.filter(user=user).order_by().values('kyu').distinct()]
+            details = {}
 
-    user = PersonalInfo.objects.get(codewars_name=user_name).user
+            for kyu in all_user_kyus:
+                details[kyu] = CwTask.objects.all().filter(kyu=kyu).filter(user=user).count()
 
-    data = getUserTasksData(user)
-    points = calculatePoints(data)
+            ret.append({"name": user.username,
+                       "kyuCount": details})
+    return JsonResponse(ret, safe=False)
 
-    return render(request, "bakcyl_scoreboard/dashboard.html", {
-        "task_data": data,
-        "points": points
-    })
+
+def task_kyu_count(request):
+    all_kyus = [kyu["kyu"] for kyu in CwTask.objects.order_by().values('kyu').distinct()]
+    ret = []
+
+    for kyu in all_kyus:
+        ret.append({
+            "kyu": kyu,
+            "count": CwTask.objects.all().filter(kyu=kyu).count()
+        })
+
+    return JsonResponse(ret, safe=False)
+
+
+def task_all(request):
+    all_taks_names = [name["name"] for name in CwTask.objects.order_by().values('name').distinct()]
+    print(all_taks_names)
+    ret = []
+
+    for name in all_taks_names:
+        ret.append({
+            "name": name,
+            "kyu": CwTask.objects.filter(name=name)[0].kyu,
+            "count": CwTask.objects.all().filter(name=name).count()
+        })
+
+    return JsonResponse(ret, safe=False)
+
+
+def user_data(request, username):
+    user = User.objects.get(username=username)
+    return JsonResponse(getUserTasksData(user), safe=False)
+
 
 def dashboard_tutor(request):
     if not request.user.is_authenticated:
