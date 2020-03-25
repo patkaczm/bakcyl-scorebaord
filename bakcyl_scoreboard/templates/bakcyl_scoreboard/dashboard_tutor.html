@@ -19,6 +19,11 @@
             <canvas id="4" style="width: 100%"></canvas>
         </div>
     </div>
+    <div class="row justify-content-center">
+        <div class="shadow-sm p-3 mb-3 bg-white rounded col">
+            <canvas id="5" style="width: 100%"></canvas>
+        </div>
+    </div>
 
     <script type="text/javascript">
         var dynamicColors = function () {
@@ -307,6 +312,65 @@
                                     });
                                 });
                             }
+                        }
+                    }
+                });
+            },
+            error: function (error_data) {
+                console.log(error_data)
+            }
+        })
+
+     $.ajax({
+            method: "GET",
+            url: 'user/score',
+            success: function (data) {
+                console.log(data);
+
+
+                let users = [];
+                let points = [];
+
+                for (let i in data) {
+                    users.push(data[i]["name"]);
+                    points.push(data[i]["points"]);
+                }
+
+                let coloR = [];
+                for (let i = 0; i < users.length; i++) {
+                    coloR.push(dynamicColors())
+                }
+
+                var ctx1 = document.getElementById("5");
+                height = 25 * users.length
+                ctx1.style.height = height + "px";
+
+
+                var myBarChart = new Chart(ctx1, {
+                    type: 'bar',
+                    data: {
+                        labels: users,
+                        datasets: [
+                            {
+                                label: '',
+                                backgroundColor: coloR,
+                                data: points,
+                            }
+                        ]
+                    },
+                    options: {
+                        legend: {display: false},
+                        title: {
+                            display: true,
+                            responsive: false,
+                            text: 'Students points.'
+                        },
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
                         }
                     }
                 });

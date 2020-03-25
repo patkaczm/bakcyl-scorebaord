@@ -15,7 +15,7 @@ def getUserTasksData(user):
     for kyu in sorted(kyus):
         ret.append({
             "kyu": kyu,
-            "tasks": [task.name for task in CwTask.objects.filter(user__personalinfo__isTutor=False).filter(user=user).filter(kyu=kyu)]
+            "tasks": [task.name for task in CwTask.objects.filter(user=user).filter(kyu=kyu)]
         })
     print(ret)
     return ret
@@ -94,6 +94,22 @@ def task_all(request):
 def user_data(request, username):
     user = User.objects.get(username=username)
     return JsonResponse(getUserTasksData(user), safe=False)
+
+
+def points(request):
+    students = User.objects.filter(personalinfo__isTutor=False)
+    ret = []
+    for student in students:
+        pi = PersonalInfo.objects.get(user=student)
+        tasks = CwTask.objects.filter(user=student)
+        score = 0
+        for task in tasks:
+            score += 100 - (10 * task.kyu)
+        ret.append({
+            "name": "{} {}".format(pi.first_name, pi.last_name),
+            "points": score
+        })
+    return JsonResponse(ret, safe=False)
 
 
 def dashboard_tutor(request):
