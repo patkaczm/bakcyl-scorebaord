@@ -53,7 +53,8 @@ def all_users_data(request):
                 if count_ > 0:
                     details[kyu] = count_
 
-            ret.append({"name": user.username,
+            pi = PersonalInfo.objects.get(user=user)
+            ret.append({"name": "{} {}".format(pi.first_name, pi.last_name),
                        "kyuCount": details})
     return JsonResponse(ret, safe=False)
 
