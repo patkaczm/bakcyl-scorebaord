@@ -14,6 +14,6 @@ urlpatterns = [
 
 
 # should be run one a day
-from background_task.models import Task
-updateCwTasks(repeat=Task.DAILY)
+# from background_task.models import Task
+# updateCwTasks(repeat=Task.DAILY)
 # print("Tasks updated")
