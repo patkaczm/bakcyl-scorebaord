@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'website',
     'crispy_forms',
     'bakcyl_scoreboard',
+    'background_task',
 ]
 
 MIDDLEWARE = [

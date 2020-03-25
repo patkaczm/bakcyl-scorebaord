@@ -3,7 +3,8 @@ from register.models import PersonalInfo
 from django.contrib.auth.models import User
 import requests
 
-
+from background_task import background
+@background()
 def updateCwTasks():
     for pi in PersonalInfo.objects.all():
         user_tasks = requests.get('https://www.codewars.com/api/v1/users/{}/code-challenges/completed'.format(pi.codewars_name))

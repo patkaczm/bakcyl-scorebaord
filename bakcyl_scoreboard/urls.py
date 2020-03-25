@@ -11,6 +11,9 @@ urlpatterns = [
     path('task/all', views.task_all, name='task_all'),
 ]
 
+
+
 # should be run one a day
-# updateCwTasks()
+from background_task.models import Task
+updateCwTasks(repeat=Task.DAILY)
 # print("Tasks updated")
