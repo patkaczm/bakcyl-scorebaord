@@ -25,3 +25,4 @@ def updateCwTasks():
                         cwTask.save()
         else:
             print("Data for {} not found".format(pi.codewars_name))
+    print("Tasks info had beed updated.")

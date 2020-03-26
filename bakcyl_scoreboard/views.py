@@ -17,7 +17,6 @@ def getUserTasksData(user):
             "kyu": kyu,
             "tasks": [task.name for task in CwTask.objects.filter(user=user).filter(kyu=kyu)]
         })
-    print(ret)
     return ret
 
 
@@ -77,7 +76,6 @@ def task_kyu_count(request):
 
 def task_all(request):
     all_taks_names = [name["name"] for name in CwTask.objects.order_by().values('name').distinct()]
-    print(all_taks_names)
     ret = []
 
     for name in all_taks_names:

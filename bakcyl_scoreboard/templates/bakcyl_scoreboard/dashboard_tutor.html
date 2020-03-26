@@ -142,7 +142,7 @@
 
                 preparedData = {};
                 let users = [];
-                let userKyu = [[], [], [], [], [], [], [], []];
+                let userKyu = [[], [], [], [], [], [], [], [], []];
 
                 for (let i in data) {
                     users.push(data[i]["name"])
@@ -154,7 +154,7 @@
                         }
                     }
                 }
-
+                userKyu.shift();
                 let coloR = [];
                 for (let i = 0; i < userKyu.length; i++) {
                     coloR.push(dynamicColors())
@@ -288,12 +288,8 @@
                                 }
                             }]
                         },
-                        events: false,
-                        tooltips: {
-                            enabled: false
-                        },
                         hover: {
-                            animationDuration: 0
+                            animationDuration: 1
                         },
                         animation: {
                             duration: 1,
