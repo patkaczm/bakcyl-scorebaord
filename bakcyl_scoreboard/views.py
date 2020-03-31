@@ -55,7 +55,6 @@ def get_user_data(user, dateFrom, dateTo, filterTutor = True):
                     completedAt__range=(dateFrom, dateTo)).filter(user=user).count()
             else:
                 count_ = CwTask.objects.all().filter(kyu=kyu).filter(user=user).count()
-                print(count_)
             if count_ > 0:
                 details[kyu] = count_
 
