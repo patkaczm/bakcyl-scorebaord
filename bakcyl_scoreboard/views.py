@@ -4,6 +4,7 @@ import requests
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 from .models import CwTask
+import datetime
 
 
 def getUserTasksData(user):
@@ -40,23 +41,93 @@ def dashboard(request):
     })
 
 
+def get_user_data(user, dateFrom, dateTo, filterTutor = True):
+    if filterTutor and PersonalInfo.objects.get(user=user).isTutor:
+        return
+    else:
+        all_user_kyus = [kyu["kyu"] for kyu in CwTask.objects.filter(
+            user=user).order_by().values('kyu').distinct()]
+        details = {}
+
+        for kyu in all_user_kyus:
+            if isinstance(dateFrom, datetime.date) and isinstance(dateTo, datetime.date):
+                count_ = CwTask.objects.all().filter(kyu=kyu).filter(
+                    completedAt__range=(dateFrom, dateTo)).filter(user=user).count()
+            else:
+                count_ = CwTask.objects.all().filter(kyu=kyu).filter(user=user).count()
+                print(count_)
+            if count_ > 0:
+                details[kyu] = count_
+
+        pi = PersonalInfo.objects.get(user=user)
+        return {"name": "{} {}".format(pi.first_name, pi.last_name),
+                "kyuCount": details}
+
+
 def all_users_data(request):
     ret = []
     for user in User.objects.all():
-        if not PersonalInfo.objects.get(user=user).isTutor:
-            all_user_kyus = [kyu["kyu"] for kyu in CwTask.objects.filter(user__personalinfo__isTutor=False).filter(user=user).order_by().values('kyu').distinct()]
-            details = {}
+        data = get_user_data(user, None, None)
+        if data:
+            ret.append(data)
+    return JsonResponse({'data': ret})
 
-            for kyu in all_user_kyus:
-                count_ = CwTask.objects.all().filter(kyu=kyu).filter(user=user).count()
-                if count_ > 0:
-                    details[kyu] = count_
 
-            pi = PersonalInfo.objects.get(user=user)
-            ret.append({"name": "{} {}".format(pi.first_name, pi.last_name),
-                       "kyuCount": details})
-    return JsonResponse(ret, safe=False)
+def last_week_users_data(request):
+    today = datetime.date.today()
+    last_week_monday = today - datetime.timedelta(days=today.weekday(), weeks=1)
+    last_week_sunday = last_week_monday + datetime.timedelta(days=6)
 
+    ret = []
+    for user in User.objects.all():
+        data = get_user_data(user, last_week_monday, last_week_sunday)
+        if data:
+            ret.append(data)
+
+
+    return JsonResponse({
+        'data': ret,
+        'time': {
+            'start': last_week_monday,
+            'end': last_week_sunday,
+        }})
+
+
+def this_week_users_data(request):
+    today = datetime.date.today()
+    this_week_monday = today - datetime.timedelta(days=today.weekday())
+    this_week_sunday = this_week_monday + datetime.timedelta(days=6)
+
+    ret = []
+    for user in User.objects.all():
+        data = get_user_data(user, this_week_monday, this_week_sunday)
+        if data:
+            ret.append(data)
+
+    return JsonResponse({
+        'data': ret,
+        'time': {
+            'start': this_week_monday,
+            'end': this_week_sunday,
+        }
+    })
+
+
+def this_week_user_data(request, username):
+    today = datetime.date.today()
+    this_week_monday = today - datetime.timedelta(days=today.weekday())
+    this_week_sunday = this_week_monday + datetime.timedelta(days=6)
+
+    user = User.objects.get(username=username)
+    data = get_user_data(user, this_week_monday, this_week_sunday, False)
+
+    return JsonResponse({
+        'data': data,
+        'time': {
+            'start': this_week_monday,
+            'end': this_week_sunday,
+        }
+    })
 
 def task_kyu_count(request):
     all_kyus = [kyu["kyu"] for kyu in CwTask.objects.order_by().values('kyu').distinct()]
@@ -68,7 +139,8 @@ def task_kyu_count(request):
             ret.append({
                 "kyu": kyu,
                 "count": count_,
-                "unique": CwTask.objects.all().filter(user__personalinfo__isTutor=False).filter(kyu=kyu).order_by().values('name').distinct().count(),
+                "unique": CwTask.objects.all().filter(user__personalinfo__isTutor=False).filter(
+                    kyu=kyu).order_by().values('name').distinct().count(),
             })
 
     return JsonResponse(ret, safe=False)
@@ -127,6 +199,6 @@ def dashboard_tutor(request):
             selectedStudent = request.POST.get("showStatisticsUser")
 
     return render(request, "bakcyl_scoreboard/dashboard_tutor.html", {
-                                                                        "students":students,
-                                                                        "selectedStudent": selectedStudent,
-                                                                    })
+        "students": students,
+        "selectedStudent": selectedStudent,
+    })

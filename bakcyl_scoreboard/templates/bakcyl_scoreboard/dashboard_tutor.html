@@ -11,7 +11,26 @@
     </div>
     <div class="row justify-content-center">
         <div class="shadow-sm p-3 mb-3 bg-white rounded col">
-            <canvas id="3" style="width: 100%"></canvas>
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link" id="home-tab" data-toggle="tab" href="#home" role="tab"
+                       aria-controls="home" aria-selected="true" onclick="changeToCurrentWeek()">current week</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
+                       aria-controls="profile" aria-selected="false" onclick="changeToLastWeek()">last week</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" id="contact-tab" data-toggle="tab" href="#contact" role="tab"
+                       aria-controls="contact" aria-selected="false" onclick="changeToAll()">all</a>
+                </li>
+            </ul>
+            <canvas id="3" style="width: 100%; height: 660px"></canvas>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="shadow-sm p-3 mb-3 bg-white rounded col">
+            <canvas id="5" style="width: 100%; height: 660px"></canvas>
         </div>
     </div>
     <div class="row justify-content-center">
@@ -19,13 +38,57 @@
             <canvas id="4" style="width: 100%"></canvas>
         </div>
     </div>
-    <div class="row justify-content-center">
-        <div class="shadow-sm p-3 mb-3 bg-white rounded col">
-            <canvas id="5" style="width: 100%"></canvas>
-        </div>
-    </div>
 
     <script type="text/javascript">
+        var stdChart;
+
+        function changeData(endpoint) {
+            $.ajax({
+            method: "GET",
+            url: endpoint,
+            success: function (data) {
+                preparedData = {};
+                let users = [];
+                let userKyu = [[], [], [], [], [], [], [], [], []];
+
+                for (let i in data.data) {
+                    users.push(data.data[i]["name"])
+                    for (let j = 0; j < userKyu.length; j++) {
+                        if (!(j in data.data[i]["kyuCount"])) {
+                            userKyu[j].push(0);
+                        } else {
+                            userKyu[j].push(data.data[i]["kyuCount"][j]);
+                        }
+                    }
+                }
+                userKyu.shift();
+                let coloR = [];
+                for (let i = 0; i < userKyu.length; i++) {
+                    coloR.push(dynamicColors())
+                }
+                for (let i = 0 ; i < userKyu.length; i++) {
+                    stdChart.data.datasets[i].data = userKyu[i]
+                }
+                stdChart.options.title.text = data.time ? ("Tasks done between " + data.time.start + " - " + data.time.end) : "All tasks done.";
+                stdChart.update();
+            },
+            error: function (error_data) {
+                console.log(error_data)
+            }})
+        }
+
+        function changeToCurrentWeek() {
+            changeData("user/this-week");
+        }
+
+        function changeToLastWeek() {
+            changeData("user/last-week");
+        }
+
+        function changeToAll() {
+            changeData('user/all');
+        }
+
         var dynamicColors = function () {
             var r = Math.floor(Math.random() * 255);
             var g = Math.floor(Math.random() * 255);
@@ -144,13 +207,13 @@
                 let users = [];
                 let userKyu = [[], [], [], [], [], [], [], [], []];
 
-                for (let i in data) {
-                    users.push(data[i]["name"])
+                for (let i in data.data) {
+                    users.push(data.data[i]["name"])
                     for (let j = 0; j < userKyu.length; j++) {
-                        if (!(j in data[i]["kyuCount"])) {
+                        if (!(j in data.data[i]["kyuCount"])) {
                             userKyu[j].push(0);
                         } else {
-                            userKyu[j].push(data[i]["kyuCount"][j]);
+                            userKyu[j].push(data.data[i]["kyuCount"][j]);
                         }
                     }
                 }
@@ -161,11 +224,8 @@
                 }
 
                 var ctx1 = document.getElementById("3");
-                height = 20 * users.length
-                ctx1.style.height = height + "px";
 
-
-                var myBarChart = new Chart(ctx1, {
+                stdChart = new Chart(ctx1, {
                     type: 'bar',
                     data: {
                         labels: users,
@@ -224,7 +284,10 @@
                                 stacked: true
                             }],
                             yAxes: [{
-                                stacked: true
+                                stacked: true,
+                                ticks: {
+                                    beginAtZero: true
+                                }
                             }]
                         }
                     }
@@ -304,7 +367,7 @@
                                     var meta = chartInstance.controller.getDatasetMeta(i);
                                     meta.data.forEach(function (bar, index) {
                                         var data = kyus[index];
-                                        ctx.fillText(data, bar._model.x, bar._model.y -10);
+                                        ctx.fillText(data, bar._model.x, bar._model.y - 10);
                                     });
                                 });
                             }
@@ -317,7 +380,7 @@
             }
         })
 
-     $.ajax({
+        $.ajax({
             method: "GET",
             url: 'user/score',
             success: function (data) {
@@ -338,9 +401,6 @@
                 }
 
                 var ctx1 = document.getElementById("5");
-                height = 25 * users.length
-                ctx1.style.height = height + "px";
-
 
                 var myBarChart = new Chart(ctx1, {
                     type: 'bar',
@@ -375,6 +435,7 @@
                 console.log(error_data)
             }
         })
+
 
     </script>
 {% endblock %}
