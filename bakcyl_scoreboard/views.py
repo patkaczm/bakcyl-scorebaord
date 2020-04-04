@@ -5,6 +5,7 @@ from django.http import JsonResponse
 from django.contrib.auth.models import User
 from .models import CwTask
 import datetime
+from .misc import updateTasksForUser, updateCwTaskss
 
 
 def getUserTasksData(user):
@@ -31,6 +32,10 @@ def calculatePoints(tasks):
 def dashboard(request):
     if not request.user.is_authenticated:
         return redirect("login")
+
+    if request.method == "POST":
+        if request.POST.get('refresh') == 'refresh':
+            updateTasksForUser(request.user)
 
     data = getUserTasksData(request.user)
     points = calculatePoints(data)
@@ -189,6 +194,11 @@ def dashboard_tutor(request):
     isTutor = PersonalInfo.objects.get(user=request.user).isTutor
     if not isTutor:
         return redirect("dashboard")
+
+    if request.method == "POST":
+        if request.POST.get('refresh') == 'refresh':
+            print("clicked")
+            updateCwTaskss()
 
     students = PersonalInfo.objects.filter(isTutor=False)
     selectedStudent = None

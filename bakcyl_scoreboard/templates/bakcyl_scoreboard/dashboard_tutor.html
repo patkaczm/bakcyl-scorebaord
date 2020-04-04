@@ -2,6 +2,12 @@
 
 {% block content %}
     <div class="row justify-content-center shadow-sm p-3 mb-3 bg-white rounded">
+        <form method='post' action='#'>
+            {% csrf_token %}
+            <input class="btn btn-primary" style="display: flex;" type="submit" value="refresh" name="refresh"/>
+        </form>
+    </div>
+    <div class="row justify-content-center shadow-sm p-3 mb-3 bg-white rounded">
         <div class="col">
             <canvas id="1" style="width: 100%"></canvas>
         </div>
@@ -44,37 +50,38 @@
 
         function changeData(endpoint) {
             $.ajax({
-            method: "GET",
-            url: endpoint,
-            success: function (data) {
-                preparedData = {};
-                let users = [];
-                let userKyu = [[], [], [], [], [], [], [], [], []];
+                method: "GET",
+                url: endpoint,
+                success: function (data) {
+                    preparedData = {};
+                    let users = [];
+                    let userKyu = [[], [], [], [], [], [], [], [], []];
 
-                for (let i in data.data) {
-                    users.push(data.data[i]["name"])
-                    for (let j = 0; j < userKyu.length; j++) {
-                        if (!(j in data.data[i]["kyuCount"])) {
-                            userKyu[j].push(0);
-                        } else {
-                            userKyu[j].push(data.data[i]["kyuCount"][j]);
+                    for (let i in data.data) {
+                        users.push(data.data[i]["name"])
+                        for (let j = 0; j < userKyu.length; j++) {
+                            if (!(j in data.data[i]["kyuCount"])) {
+                                userKyu[j].push(0);
+                            } else {
+                                userKyu[j].push(data.data[i]["kyuCount"][j]);
+                            }
                         }
                     }
+                    userKyu.shift();
+                    let coloR = [];
+                    for (let i = 0; i < userKyu.length; i++) {
+                        coloR.push(dynamicColors())
+                    }
+                    for (let i = 0; i < userKyu.length; i++) {
+                        stdChart.data.datasets[i].data = userKyu[i]
+                    }
+                    stdChart.options.title.text = data.time ? ("Tasks done between " + data.time.start + " - " + data.time.end) : "All tasks done.";
+                    stdChart.update();
+                },
+                error: function (error_data) {
+                    console.log(error_data)
                 }
-                userKyu.shift();
-                let coloR = [];
-                for (let i = 0; i < userKyu.length; i++) {
-                    coloR.push(dynamicColors())
-                }
-                for (let i = 0 ; i < userKyu.length; i++) {
-                    stdChart.data.datasets[i].data = userKyu[i]
-                }
-                stdChart.options.title.text = data.time ? ("Tasks done between " + data.time.start + " - " + data.time.end) : "All tasks done.";
-                stdChart.update();
-            },
-            error: function (error_data) {
-                console.log(error_data)
-            }})
+            })
         }
 
         function changeToCurrentWeek() {

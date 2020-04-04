@@ -27,6 +27,10 @@
                         </tr>
                         </tbody>
                     </table>
+                    <form method='post' action='#'>
+                        {% csrf_token %}
+                        <input class="btn btn-primary" type="submit" value="refresh" name="refresh"/>
+                    </form>
                 </div>
             </div>
         </div>
