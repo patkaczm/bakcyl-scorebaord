@@ -112,7 +112,7 @@
                 var coloR = [];
 
                 for (let i in data) {
-                    kyuLabel.push("Kyu: " + data[i]["kyu"]);
+                    kyuLabel.push("Level: " + data[i]["kyu"]);
                     kyuData.push(data[i]["count"]);
                 }
                 for (var i in kyuLabel) {
@@ -161,7 +161,7 @@
                 var coloR = [];
 
                 for (let i in data) {
-                    kyuLabel.push("Kyu: " + data[i]["kyu"]);
+                    kyuLabel.push("Level: " + data[i]["kyu"]);
                     kyuData.push(data[i]["unique"]);
                 }
                 for (var i in kyuLabel) {
@@ -238,42 +238,42 @@
                         labels: users,
                         datasets: [
                             {
-                                label: ["Kyu: 1"],
+                                label: ["Level: 1"],
                                 backgroundColor: coloR[0],
                                 data: userKyu[0],
                             },
                             {
-                                label: ["Kyu: 2"],
+                                label: ["Level: 2"],
                                 backgroundColor: coloR[1],
                                 data: userKyu[1],
                             },
                             {
-                                label: ["Kyu: 3"],
+                                label: ["Level: 3"],
                                 backgroundColor: coloR[2],
                                 data: userKyu[2]
                             },
                             {
-                                label: ["Kyu: 4"],
+                                label: ["Level: 4"],
                                 backgroundColor: coloR[3],
                                 data: userKyu[3],
                             },
                             {
-                                label: ["Kyu: 5"],
+                                label: ["Level: 5"],
                                 backgroundColor: coloR[4],
                                 data: userKyu[4],
                             },
                             {
-                                label: ["Kyu: 6"],
+                                label: ["Level: 6"],
                                 backgroundColor: coloR[5],
                                 data: userKyu[5],
                             },
                             {
-                                label: ["Kyu: 7"],
+                                label: ["Level: 7"],
                                 backgroundColor: coloR[6],
                                 data: userKyu[6]
                             },
                             {
-                                label: ["Kyu: 8"],
+                                label: ["Level: 8"],
                                 backgroundColor: coloR[7],
                                 data: userKyu[7],
                             }
@@ -349,7 +349,7 @@
                         title: {
                             display: true,
                             responsive: false,
-                            text: 'Done tasks (task\'s kyu above)'
+                            text: 'Done tasks (task\'s level above)'
                         },
                         scales: {
                             yAxes: [{
