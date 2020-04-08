@@ -56,8 +56,8 @@ def get_user_data(user, dateFrom, dateTo, filterTutor = True):
 
         for kyu in all_user_kyus:
             if isinstance(dateFrom, datetime.date) and isinstance(dateTo, datetime.date):
-                count_ = CwTask.objects.all().filter(kyu=kyu).filter(
-                    completedAt__range=(dateFrom, dateTo)).filter(user=user).count()
+                count_ = CwTask.objects.all().filter(user=user).filter(kyu=kyu).filter(
+                    completedAt__range=(dateFrom, dateTo)).count()
             else:
                 count_ = CwTask.objects.all().filter(kyu=kyu).filter(user=user).count()
             if count_ > 0:
@@ -80,7 +80,7 @@ def all_users_data(request):
 def last_week_users_data(request):
     today = datetime.date.today()
     last_week_monday = today - datetime.timedelta(days=today.weekday(), weeks=1)
-    last_week_sunday = last_week_monday + datetime.timedelta(days=6)
+    last_week_sunday = last_week_monday + datetime.timedelta(weeks=1)
 
     ret = []
     for user in User.objects.all():
@@ -100,7 +100,7 @@ def last_week_users_data(request):
 def this_week_users_data(request):
     today = datetime.date.today()
     this_week_monday = today - datetime.timedelta(days=today.weekday())
-    this_week_sunday = this_week_monday + datetime.timedelta(days=6)
+    this_week_sunday = this_week_monday + datetime.timedelta(weeks=1)
 
     ret = []
     for user in User.objects.all():
@@ -120,16 +120,31 @@ def this_week_users_data(request):
 def this_week_user_data(request, username):
     today = datetime.date.today()
     this_week_monday = today - datetime.timedelta(days=today.weekday())
-    this_week_sunday = this_week_monday + datetime.timedelta(days=6)
+    this_week_sunday = this_week_monday + datetime.timedelta(weeks=1)
 
     user = User.objects.get(username=username)
     data = get_user_data(user, this_week_monday, this_week_sunday, False)
-
     return JsonResponse({
         'data': data,
         'time': {
             'start': this_week_monday,
             'end': this_week_sunday,
+        }
+    })
+
+def last_week_user_data(request, username):
+    today = datetime.date.today()
+    last_week_monday = today - datetime.timedelta(days=today.weekday(), weeks=1)
+    last_week_sunday = last_week_monday + datetime.timedelta(weeks=1)
+
+    user = User.objects.get(username=username)
+    data = get_user_data(user, last_week_monday, last_week_sunday, False)
+
+    return JsonResponse({
+        'data': data,
+        'time': {
+            'start': last_week_monday,
+            'end': last_week_sunday,
         }
     })
 
